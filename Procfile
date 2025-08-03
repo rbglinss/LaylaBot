@@ -1,1 +1,1 @@
-web: python layla_bot.py
+web: gunicorn layla_bot:app
