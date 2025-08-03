@@ -1,9 +1,8 @@
 services:
   - type: web
-    name: laylabot
+    name: LaylaBot
     env: python
     region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn layla_bot:app
     plan: free
-    branch: main
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn layla_bot:app"
