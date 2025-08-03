@@ -1,0 +1,19 @@
+
+# Ignorar cache do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+*.env
+
+# Arquivos de IDE
+.vscode/
+.idea/
+
+# Outros arquivos desnecessários
+.DS_Store
+*.log
