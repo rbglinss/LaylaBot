@@ -1,40 +1,29 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask
 import openai
 
 app = Flask(__name__)
 
-# Pegando a chave da OpenAI do ambiente
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+# Pega a chave da variável de ambiente no Render
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-@app.route('/')
+@app.route("/")
 def home():
-    return "LaylaBot with AI is running!"
+    return "LaylaBot está pronto para responder!"
 
-@app.route('/ask', methods=['POST'])
-def ask():
-    data = request.get_json()
-    question = data.get("question", "")
-
-    if not question:
-        return jsonify({"error": "Pergunta não enviada"}), 400
-
+@app.route("/ask/<question>")
+def ask(question):
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Pode mudar para gpt-4 se tiver acesso
+            model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "Você é uma assistente chamada Layla, simpática e clara nas respostas."},
+                {"role": "system", "content": "Você é um assistente amigável chamado LaylaBot."},
                 {"role": "user", "content": question}
-            ],
-            max_tokens=200
+            ]
         )
-
-        answer = response['choices'][0]['message']['content'].strip()
-        return jsonify({"response": answer})
-
+        return response.choices[0].message["content"]
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return f"Ocorreu um erro: {str(e)}"
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))
-    app.run(host='0.0.0.0', port=port)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
