@@ -1,29 +1,34 @@
+
+from flask import Flask, request, jsonify
 import os
-from flask import Flask
 import openai
 
 app = Flask(__name__)
 
-# Pega a chave da variável de ambiente no Render
+# Configuração da API OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/")
 def home():
     return "LaylaBot está pronto para responder!"
 
-@app.route("/ask/<question>")
-def ask(question):
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    message = data.get("message")
+
+    if not message:
+        return jsonify({"error": "Mensagem não fornecida"}), 400
+
     try:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "Você é um assistente amigável chamado LaylaBot."},
-                {"role": "user", "content": question}
-            ]
+            messages=[{"role": "user", "content": message}]
         )
-        return response.choices[0].message["content"]
+        answer = response["choices"][0]["message"]["content"]
+        return jsonify({"response": answer})
     except Exception as e:
-        return f"Ocorreu um erro: {str(e)}"
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
