@@ -1,11 +1,10 @@
-
 from flask import Flask, request, jsonify
 import os
 import openai
 
 app = Flask(__name__)
 
-# Configuração da API OpenAI
+# Configuração da chave da API OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/")
@@ -15,7 +14,7 @@ def home():
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
-    message = data.get("message")
+    message = data.get("message", "")
 
     if not message:
         return jsonify({"error": "Mensagem não fornecida"}), 400
@@ -25,8 +24,8 @@ def chat():
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": message}]
         )
-        answer = response["choices"][0]["message"]["content"]
-        return jsonify({"response": answer})
+        reply = response['choices'][0]['message']['content']
+        return jsonify({"response": reply})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
