@@ -2,9 +2,6 @@ services:
   - type: web
     name: LaylaBot
     env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn layla_bot:app
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn layla_bot:app"
-    envVars:
-      - key: OPENAI_API_KEY
-        sync: false
